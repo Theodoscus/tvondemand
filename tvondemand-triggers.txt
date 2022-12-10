@@ -1,0 +1,204 @@
+4.1 
+
+DELIMITER $$
+CREATE TRIGGER film_pay AFTER INSERT ON film_payment
+FOR EACH ROW
+BEGIN
+  INSERT INTO log (action, action_time, id, plan_id, total_amount, payment_date, user_id,film_rental_id, table_name, rental_date, film_inventory_id, series_inventory_id, series_rental_id, plan_type_id,successful, action_performed_by)
+  VALUES('INSERT', NOW(), NEW.id, NEW.plan_id, NEW.total_amount, NEW.payment_date, NEW.user_id, NEW.film_rental_id, 'film_payment', NULL, NULL, NULL, NULL, NULL,NULL,NULL);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER film_pay_up AFTER UPDATE ON film_payment
+FOR EACH ROW
+BEGIN
+  INSERT INTO log (action, action_time, id, plan_id, total_amount, payment_date, user_id,film_rental_id, table_name, rental_date, film_inventory_id, series_inventory_id, series_rental_id, plan_type_id,successful, action_performed_by)
+  VALUES('UPDATE', NOW(), NEW.id, NEW.plan_id, NEW.total_amount, NEW.payment_date, NEW.user_id, NEW.film_rental_id, 'film_payment', NULL, NULL, NULL, NULL, NULL,NULL,NULL);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER film_pay_del AFTER DELETE ON film_payment
+FOR EACH ROW
+BEGIN
+  INSERT INTO log (action, action_time, id, plan_id, total_amount, payment_date, user_id,film_rental_id, table_name, rental_date, film_inventory_id, series_inventory_id, series_rental_id, plan_type_id,successful, action_performed_by)
+  VALUES('DELETE', NOW(), OLD.id, OLD.plan_id, OLD.total_amount, OLD.payment_date, OLD.user_id, OLD.film_rental_id, 'film_payment', NULL, NULL, NULL, NULL, NULL,NULL,NULL);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER series_pay AFTER INSERT ON series_payment
+FOR EACH ROW
+BEGIN
+  INSERT INTO log (action, action_time, id, plan_id, total_amount, payment_date, user_id,film_rental_id, table_name, rental_date, film_inventory_id, series_inventory_id, series_rental_id, plan_type_id,successful, action_performed_by)
+  VALUES('INSERT', NOW(), NEW.id, NEW.plan_id, NEW.total_amount, NEW.payment_date, NEW.user_id, NULL, 'series_payment', NULL, NULL, NULL, NEW.series_rental_id, NULL,NULL,NULL);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER series_pay_del AFTER DELETE ON series_payment
+FOR EACH ROW
+BEGIN
+  INSERT INTO log (action, action_time, id, plan_id, total_amount, payment_date, user_id,film_rental_id, table_name, rental_date, film_inventory_id, series_inventory_id, series_rental_id, plan_type_id,successful, action_performed_by)
+  VALUES('DELETE', NOW(), OLD.id, OLD.plan_id, OLD.total_amount, OLD.payment_date, OLD.user_id, NULL, 'series_payment', NULL, NULL, NULL, OLD.series_rental_id, NULL,NULL,NULL);
+END$$
+DELIMITER ;
+
+
+DELIMITER $$
+CREATE TRIGGER series_pay_up AFTER UPDATE ON series_payment
+FOR EACH ROW
+BEGIN
+  INSERT INTO log (action, action_time, id, plan_id, total_amount, payment_date, user_id,film_rental_id, table_name, rental_date, film_inventory_id, series_inventory_id, series_rental_id, plan_type_id,successful, action_performed_by)
+  VALUES('UPDATE', NOW(), NEW.id, NEW.plan_id, NEW.total_amount, NEW.payment_date, NEW.user_id, NULL, 'series_payment', NULL, NULL, NULL, NEW.series_rental_id, NULL,NULL,NULL);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER film_rent AFTER INSERT ON film_rental
+FOR EACH ROW
+BEGIN
+  INSERT INTO log (action, action_time, id, plan_id, total_amount, payment_date, user_id,film_rental_id, table_name, rental_date, film_inventory_id, series_inventory_id, series_rental_id, plan_type_id,successful, action_performed_by)
+  VALUES('INSERT', NOW(), NEW.id, NULL, NULL, NULL, NEW.user_id, NULL, 'film_rental', NEW.rental_date, NEW.film_inventory_id, NULL, NULL, NULL,NULL,NULL);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER film_rent_up AFTER UPDATE ON film_rental
+FOR EACH ROW
+BEGIN
+  INSERT INTO log (action, action_time, id, plan_id, total_amount, payment_date, user_id,film_rental_id, table_name, rental_date, film_inventory_id, series_inventory_id, series_rental_id, plan_type_id,successful, action_performed_by)
+  VALUES('UPDATE', NOW(), NEW.id, NULL, NULL, NULL, NEW.user_id, NULL, 'film_rental', NEW.rental_date, NEW.film_inventory_id, NULL, NULL, NULL,NULL,NULL);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER film_rent_del AFTER DELETE ON film_rental
+FOR EACH ROW
+BEGIN
+  INSERT INTO log (action, action_time, id, plan_id, total_amount, payment_date, user_id,film_rental_id, table_name, rental_date, film_inventory_id, series_inventory_id, series_rental_id, plan_type_id,successful, action_performed_by)
+  VALUES('DELETE', NOW(), OLD.id, NULL, NULL, NULL, OLD.user_id, NULL, 'film_rental', OLD.rental_date, OLD.film_inventory_id, NULL, NULL, NULL,NULL,NULL);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER series_rent AFTER INSERT ON series_rental
+FOR EACH ROW
+BEGIN
+  INSERT INTO log (action, action_time, id, plan_id, total_amount, payment_date, user_id,film_rental_id, table_name, rental_date, film_inventory_id, series_inventory_id, series_rental_id, plan_type_id,successful, action_performed_by)
+  VALUES('INSERT', NOW(), NEW.id, NULL, NULL, NULL, NEW.user_id, NULL, 'series_rental', NEW.rental_date, NULL, NEW.series_inventory_id, NULL, NULL,NULL,NULL);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER series_rent_up AFTER UPDATE ON series_rental
+FOR EACH ROW
+BEGIN
+  INSERT INTO log (action, action_time, id, plan_id, total_amount, payment_date, user_id,film_rental_id, table_name, rental_date, film_inventory_id, series_inventory_id, series_rental_id, plan_type_id,successful, action_performed_by)
+  VALUES('UPDATE', NOW(), NEW.id, NULL, NULL, NULL, NEW.user_id, NULL, 'series_rental', NEW.rental_date, NULL, NEW.series_inventory_id, NULL, NULL,NULL,NULL);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER series_rent_del AFTER DELETE ON series_rental
+FOR EACH ROW
+BEGIN
+  INSERT INTO log (action, action_time, id, plan_id, total_amount, payment_date, user_id,film_rental_id, table_name, rental_date, film_inventory_id, series_inventory_id, series_rental_id, plan_type_id,successful, action_performed_by)
+  VALUES('DELETE', NOW(), OLD.id, NULL, NULL, NULL, OLD.user_id, NULL, 'series_rental', OLD.rental_date, NULL, OLD.series_inventory_id, NULL, NULL,NULL,NULL);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER plan AFTER INSERT ON plan
+FOR EACH ROW
+BEGIN
+  INSERT INTO log (action, action_time, id, plan_id, total_amount, payment_date, user_id,film_rental_id, table_name, rental_date, film_inventory_id, series_inventory_id, series_rental_id, plan_type_id,successful, action_performed_by)
+  VALUES('INSERT', NOW(), NEW.id, NULL, NULL, NULL, NEW.user_id, NULL, 'plan', NULL, NULL, NULL, NULL, NEW.plan_type_id,NULL,NULL);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER plan_up AFTER UPDATE ON plan
+FOR EACH ROW
+BEGIN
+  INSERT INTO log (action, action_time, id, plan_id, total_amount, payment_date, user_id,film_rental_id, table_name, rental_date, film_inventory_id, series_inventory_id, series_rental_id, plan_type_id,successful, action_performed_by)
+  VALUES('UPDATE', NOW(), NEW.id, NULL, NULL, NULL, NEW.user_id, NULL, 'plan', NULL, NULL, NULL, NULL, NEW.plan_type_id,NULL,NULL);
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER plan_del AFTER DELETE ON plan
+FOR EACH ROW
+BEGIN
+  INSERT INTO log (action, action_time, id, plan_id, total_amount, payment_date, user_id,film_rental_id, table_name, rental_date, film_inventory_id, series_inventory_id, series_rental_id, plan_type_id,successful, action_performed_by)
+  VALUES('DELETE', NOW(), OLD.id, NULL, NULL, NULL, OLD.user_id, NULL, 'plan', NULL, NULL, NULL, NULL, OLD.plan_type_id,NULL,NULL);
+END$$
+DELIMITER ;
+4.2 
+
+DELIMITER $$
+CREATE TRIGGER discount AFTER INSERT ON film_payment
+FOR EACH ROW
+BEGIN
+    DECLARE plan INT;
+    DECLARE Films_Rented INT;
+    DECLARE Series_Rented INT;
+    
+    SET @plan=(SELECT plan_type.id FROM plan_type, plan, film_payment WHERE NEW.user_id=plan.user_id AND plan.plan_type_id=plan_type.id LIMIT 1);
+    IF @plan=1 THEN
+	SET @Films_Rented =(SELECT COUNT(film_payment.id) FROM film_payment WHERE NEW.user_id=film_payment.user_id AND DATE(NEW.payment_date)=DATE(film_payment.payment_date));
+    ELSEIF @plan=3 THEN 
+    SET @Films_Rented =(SELECT COUNT(film_payment.id) FROM film_payment WHERE NEW.user_id=film_payment.user_id AND DATE(NEW.payment_date)=DATE(film_payment.payment_date));
+	SET @Series_Rented=(SELECT COUNT(series_payment.id) FROM series_payment WHERE NEW.user_id=series_payment.user_id AND DATE(NEW.payment_date)=DATE(series_payment.payment_date));
+    END IF;
+    
+    
+    IF (1+@Films_Rented)%3=0 AND @plan=1 THEN
+    UPDATE user
+    SET discount=0.5
+    WHERE new.user_id=id;
+    ELSEIF (1+@Films_Rented+@Series_Rented)%3=0 AND @plan=3 THEN
+    UPDATE user
+    SET discount=0.5
+    WHERE new.user_id=id;
+    ELSE 
+    UPDATE user
+    SET discount=1
+    WHERE new.user_id=id;
+    END IF;
+END$$
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER discount1 AFTER INSERT ON series_payment
+FOR EACH ROW
+BEGIN
+    DECLARE plan INT;
+    DECLARE Films_Rented INT;
+    DECLARE Series_Rented INT;
+    
+    SET @plan=(SELECT plan_type.id FROM plan_type, plan, series_payment WHERE NEW.user_id=plan.user_id AND plan.plan_type_id=plan_type.id LIMIT 1);
+    IF @plan=2 THEN
+	SET @Series_Rented =(SELECT COUNT(series_payment.id) FROM series_payment WHERE NEW.user_id=series_payment.user_id AND DATE(NEW.payment_date)=DATE(series_payment.payment_date));
+    ELSEIF @plan=3 THEN 
+	SET @Series_Rented=(SELECT COUNT(series_payment.id) FROM series_payment WHERE NEW.user_id=series_payment.user_id AND DATE(NEW.payment_date)=DATE(series_payment.payment_date));
+    	SET @Films_Rented =(SELECT COUNT(film_payment.id) FROM film_payment WHERE NEW.user_id=film_payment.user_id AND DATE(NEW.payment_date)=DATE(film_payment.payment_date));
+    END IF;
+    
+    
+    IF (1+@Series_Rented)%3=0 AND @plan=2 THEN
+    UPDATE user
+    SET discount=0.5
+    WHERE new.user_id=id;
+    ELSEIF (1+@Series_Rented+@Films_Rented)%3=0 AND @plan=3 THEN
+    UPDATE user
+    SET discount=0.5
+    WHERE new.user_id=id;
+    ELSE 
+    UPDATE user
+    SET discount=1
+    WHERE new.user_id=id;
+    END IF;
+END$$
+DELIMITER ;

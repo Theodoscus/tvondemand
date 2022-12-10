@@ -1,0 +1,82 @@
+3.1 CREATE DEFINER=`root`@`localhost` PROCEDURE `most_rented`(IN mostrents varchar(1), IN results INT, IN startdate DATETIME, IN enddate DATE)
+BEGIN
+	DECLARE
+	Times_Rented INT;
+    IF mostrents LIKE 'm' THEN
+    
+    SELECT film_id, title, COUNT(film_id) AS `Times_Rented` 
+	FROM film_inventory, film, film_rental
+    WHERE film.id = film_inventory.film_id AND film_rental.film_inventory_id=film_inventory.id AND DATE(film_rental.rental_date)>=startdate AND DATE(film_rental.rental_date)<=enddate
+	GROUP BY film_id
+	ORDER BY COUNT(film_id) DESC
+    
+	LIMIT results;
+    
+    ELSEIF mostrents LIKE 's' THEN
+    
+    SELECT episode_id, title, COUNT(episode_id) AS `Times_Rented` 
+	FROM series_inventory, episode, series_rental
+    WHERE episode.id = series_inventory.episode_id AND series_rental.series_inventory_id=series_inventory.id AND DATE(series_rental.rental_date)>=startdate AND DATE(series_rental.rental_date)<=enddate 
+	GROUP BY episode_id
+	ORDER BY COUNT(episode_id) DESC
+	LIMIT results;
+    
+    
+	
+	END IF;
+END
+
+
+3.2 CREATE DEFINER=`root`@`localhost` PROCEDURE `userrentals`(IN email CHAR(48), IN rentaldate DATE)
+BEGIN
+	DECLARE Series_Rented INT;
+    DECLARE Films_Rented INT;
+    DECLARE UserID INT;
+    DECLARE PlanType INT;
+    
+	SET @PlanType =(SELECT plan_type.id AS `PlanType`
+    FROM plan_type, plan, user
+    WHERE email=user.email AND user.id=plan.user_id AND plan.plan_type_id=plan_type.id);
+    IF @PlanType=2 THEN
+    SELECT user.id AS UserID, COUNT(series_rental.id) AS `Series_Rented`
+	FROM user, series_rental
+    WHERE email=user.email AND user.id=series_rental.user_id AND rentaldate=DATE(series_rental.rental_date);
+	ELSEIF @PlanType=1 THEN
+    SELECT user.id AS UserID, COUNT(film_rental.id) AS `Films_Rented`
+    FROM user, film_rental
+    WHERE email=user.email AND user.id=film_rental.user_id AND rentaldate=DATE(film_rental.rental_date);
+    ELSEIF @PlanType=3 THEN
+    SET @Series_Rented = (SELECT COUNT(series_rental.id) FROM user, series_rental WHERE email=user.email AND user.id=series_rental.user_id AND rentaldate=DATE(series_rental.rental_date));
+    SET @Films_Rented =(SELECT COUNT(film_rental.id) FROM user, film_rental WHERE email=user.email AND user.id=film_rental.user_id AND rentaldate=DATE(film_rental.rental_date));
+    SELECT user.id AS UserID, @Films_Rented AS `Films_Rented`, @Series_Rented AS `Series_Rented`
+    FROM user
+    WHERE email=user.email;
+    ELSE 
+    SELECT 'User not found';
+	END IF;
+    
+   
+END
+
+3.3 CREATE DEFINER=`root`@`localhost` PROCEDURE `MonthlyPayments`()
+BEGIN
+	DECLARE Year DATETIME;
+    DECLARE Month DATETIME;
+    DECLARE Films_Total_Payments DOUBLE;
+    DECLARE Series_Total_Payments DOUBLE;
+     
+	 select year(film_payment.payment_date) AS `Year` ,month(film_payment.payment_date) AS `Month`,sum(total_amount) AS `Films_Total_Payments`
+     from film_payment
+     group by year(film_payment.payment_date),month(film_payment.payment_date)
+     order by year(film_payment.payment_date),month(film_payment.payment_date);
+     
+     select year(series_payment.payment_date) AS `Year` ,month(series_payment.payment_date) AS `Month`,sum(total_amount) AS `Series_Total_Payments`
+     from series_payment
+     group by year(series_payment.payment_date),month(series_payment.payment_date)
+     order by year(series_payment.payment_date),month(series_payment.payment_date);
+	 
+     
+     
+END
+
+3.4
